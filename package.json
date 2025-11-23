@@ -1,0 +1,22 @@
+{
+  "scripts": {
+    "build": "npm run install:backend && npm run install:frontend && npm run build:frontend",
+    "install:backend": "npm install --prefix backend",
+    "install:frontend": "npm install --prefix university-past-questions-frontend",
+    "build:frontend": "npm run build --prefix university-past-questions-frontend",
+    "start": "cd backend && cross-env NODE_ENV=production node server.js",
+    "postinstall": "npm run install:backend && npm run install:frontend"
+  },
+  "dependencies": {
+    "axios": "^1.12.2",
+    "cloudinary": "^2.8.0",
+    "dotenv": "^17.2.3",
+    "multer": "^2.0.2",
+    "multer-storage-cloudinary": "^2.2.1",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^7.9.4"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
+  }
+}

@@ -1,0 +1,273 @@
+/* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #1fa750;
+  --primary-dark: #14803b;
+  --background: #ffffff;
+  --soft-bg: #f5fef8;
+  --border: #d7f3df;
+  --text-dark: #222;
+  --text-light: #555;
+  --radius: 14px;
+  --transition: 0.25s ease;
+}
+
+.authPage {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  background: var(--soft-bg);
+  font-family: "Josefin Sans", sans-serif;
+}
+
+.authContainer {
+  width: 100%;
+  max-width: 900px;
+}
+
+.authCard {
+  background: var(--background);
+  padding: 2.5rem;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  animation: fadeInUp 0.4s ease;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.authHeader {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.authHeader h2 {
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+.authHeader p {
+  color: var(--text-light);
+  margin-top: .3rem;
+  font-size: 0.95rem;
+}
+
+/* ERROR BOX */
+.authError {
+  background: #ffefef;
+  border: 1px solid #ffb4b4;
+  color: #b10000;
+  padding: 0.9rem;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  animation: pop 0.2s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(0.95); }
+  to { transform: scale(1); }
+}
+
+.errorIcon {
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.formSection {
+  margin-bottom: 2rem;
+  padding: 1.3rem;
+  border-radius: var(--radius);
+  background: var(--soft-bg);
+  border: 1px solid var(--border);
+}
+
+.sectionTitle {
+  font-size: 1.15rem;
+  color: var(--primary-dark);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.formRow {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.formGroup {
+  flex: 1;
+  min-width: 250px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.required {
+  color: red;
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30, 167, 80, 0.15);
+}
+
+/* FILE UPLOAD */
+.fileUploadArea {
+  border: 2px dashed var(--primary);
+  padding: 1.6rem;
+  border-radius: var(--radius);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  background: #fff;
+}
+
+.fileUploadArea:hover {
+  background: #f0fff4;
+  transform: scale(1.01);
+}
+
+.uploadPrompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.uploadIcon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #eefdf1;
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.fileName {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.fileSize {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.removeFileBtn {
+  border: none;
+  background: transparent;
+  color: #d40000;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.removeFileBtn:hover {
+  color: darkred;
+  transform: scale(1.1);
+}
+
+/* PROGRESS BAR */
+.uploadProgress {
+  margin-top: 1rem;
+}
+
+.progressBar {
+  height: 8px;
+  background: var(--primary);
+  width: 0%;
+  border-radius: 20px;
+  transition: width 0.3s ease;
+}
+
+.progressText {
+  display: block;
+  text-align: center;
+  margin-top: 0.2rem;
+  font-size: 0.85rem;
+}
+
+/* BUTTONS */
+.authButton {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  padding: 0.9rem;
+  border-radius: var(--radius);
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: 1.2rem;
+}
+
+.authButton:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.authButton:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--primary);
+  background: #fff;
+  color: var(--primary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.cancelButton:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.authFooter {
+  margin-top: 1.5rem;
+}

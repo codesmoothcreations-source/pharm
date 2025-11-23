@@ -1,0 +1,206 @@
+.questionCard {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.questionCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-color: #1ca65c;
+}
+
+.questionHeader {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.fileType {
+  display: flex;
+  align-items: flex-start;
+}
+
+.fileIcon {
+  font-size: 1.5rem;
+  color: #6b7280;
+}
+
+.fileIcon.pdf {
+  color: #dc2626;
+}
+
+.fileIcon.image {
+  color: #3b82f6;
+}
+
+.fileIcon.doc {
+  color: #2563eb;
+}
+
+.questionInfo {
+  flex: 1;
+}
+
+.questionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.courseDetails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.courseDetails span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.infoIcon {
+  font-size: 0.8rem;
+  color: #1ca65c;
+}
+
+.questionDescription {
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.4;
+  margin: 0 0 1rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.questionMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+  background: #f8fafc;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+}
+
+.dateInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.dateInfo span {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.questionActions {
+  display: flex;
+  gap: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 1rem;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  flex: 1;
+  justify-content: center;
+}
+
+.btnOutline {
+  background: transparent;
+  color: #1ca65c;
+  border: 1px solid #1ca65c;
+}
+
+.btnOutline:hover {
+  background: #1ca65c;
+  color: #ffffff;
+}
+
+.btnPrimary {
+  background: #1ca65c;
+  color: #ffffff;
+  border: 1px solid #1ca65c;
+}
+
+.btnPrimary:hover {
+  background: #15803d;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .questionCard {
+    padding: 1.25rem;
+  }
+  
+  .questionHeader {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .fileType {
+    justify-content: center;
+  }
+  
+  .questionActions {
+    flex-direction: column;
+  }
+  
+  .actionButton {
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .questionCard {
+    padding: 1rem;
+  }
+  
+  .questionTitle {
+    font-size: 1rem;
+  }
+  
+  .courseDetails,
+  .questionMeta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .metaItem {
+    justify-content: center;
+  }
+}

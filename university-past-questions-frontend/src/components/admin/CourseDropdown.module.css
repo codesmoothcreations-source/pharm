@@ -1,0 +1,431 @@
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.formLabel {
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.required {
+  color: #d60000;
+  font-weight: 700;
+}
+
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(31, 167, 80, 0.05);
+  border: 1px solid rgba(31, 167, 80, 0.2);
+  border-radius: 8px;
+}
+
+.dropdownContainer {
+  position: relative;
+  width: 100%;
+}
+
+.dropdownButton {
+  width: 100%;
+  background: white;
+  border: 2px solid rgba(31, 167, 80, 0.2);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  font-family: 'Josefin Sans', sans-serif;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 56px;
+}
+
+.dropdownButton:hover:not(:disabled) {
+  border-color: rgba(31, 167, 80, 0.4);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(31, 167, 80, 0.1);
+}
+
+.dropdownButton:focus {
+  outline: none;
+  border-color: #1fa750;
+  box-shadow: 0 0 0 4px rgba(31, 167, 80, 0.15);
+  transform: translateY(-2px);
+}
+
+.dropdownButton.error {
+  border-color: #d60000;
+  box-shadow: 0 0 0 4px rgba(214, 0, 0, 0.15);
+}
+
+.dropdownButton:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none !important;
+}
+
+.selectedValue {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.selectedCourse {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.courseCode {
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.courseName {
+  color: #666;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.questionCount {
+  color: #1fa750;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(31, 167, 80, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.arrow {
+  font-size: 0.8rem;
+  color: #666;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.arrow.open {
+  transform: rotate(180deg);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid rgba(31, 167, 80, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(31, 167, 80, 0.15);
+  z-index: 1000;
+  max-height: 400px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.searchContainer {
+  padding: 0.75rem;
+  border-bottom: 1px solid rgba(31, 167, 80, 0.1);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(31, 167, 80, 0.3);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: 'Josefin Sans', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #1fa750;
+  box-shadow: 0 0 0 3px rgba(31, 167, 80, 0.1);
+}
+
+.searchInput::placeholder {
+  color: #999;
+}
+
+.optionsContainer {
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(31, 167, 80, 0.3) transparent;
+}
+
+.optionsContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.optionsContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.optionsContainer::-webkit-scrollbar-thumb {
+  background: rgba(31, 167, 80, 0.3);
+  border-radius: 3px;
+}
+
+.optionsContainer::-webkit-scrollbar-thumb:hover {
+  background: rgba(31, 167, 80, 0.5);
+}
+
+.option {
+  padding: 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(31, 167, 80, 0.05);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.option:hover {
+  background: rgba(31, 167, 80, 0.05);
+}
+
+.option.selected {
+  background: rgba(31, 167, 80, 0.1);
+  border-left: 4px solid #1fa750;
+}
+
+.option:last-child {
+  border-bottom: none;
+}
+
+.courseInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.courseLevel {
+  color: #1fa750;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(31, 167, 80, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.courseStats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.statItem {
+  color: #666;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.noResults {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+
+.errorMessage {
+  background: linear-gradient(135deg, #ffeaea 0%, #ffdfdf 100%);
+  border: 1px solid #ffbcbc;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-top: 0.5rem;
+  color: #d60000;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.selectedInfo {
+  padding: 0.5rem 0;
+  color: #1fa750;
+  background: rgba(31, 167, 80, 0.05);
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.selectedInfo small {
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .dropdownButton {
+    padding: 0.875rem 1rem;
+    min-height: 52px;
+  }
+
+  .courseInfo {
+    gap: 0.2rem;
+  }
+
+  .courseCode {
+    font-size: 0.9rem;
+  }
+
+  .courseName {
+    font-size: 0.8rem;
+  }
+
+  .courseStats {
+    align-items: flex-start;
+  }
+
+  .statItem {
+    font-size: 0.7rem;
+  }
+
+  .option {
+    padding: 0.875rem;
+  }
+
+  .dropdownMenu {
+    max-height: 350px;
+  }
+
+  .optionsContainer {
+    max-height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .formGroup {
+    gap: 0.5rem;
+  }
+
+  .dropdownButton {
+    padding: 0.75rem;
+    min-height: 48px;
+  }
+
+  .searchContainer {
+    padding: 0.5rem;
+  }
+
+  .searchInput {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .option {
+    padding: 0.75rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .courseStats {
+    width: 100%;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .dropdownMenu {
+    max-height: 300px;
+  }
+
+  .optionsContainer {
+    max-height: 200px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .dropdownButton {
+    background: #2a2a2a;
+    border-color: rgba(31, 167, 80, 0.3);
+    color: #e0e0e0;
+  }
+
+  .dropdownButton:hover:not(:disabled) {
+    border-color: rgba(31, 167, 80, 0.5);
+  }
+
+  .courseCode {
+    color: #e0e0e0;
+  }
+
+  .courseName {
+    color: #b0b0b0;
+  }
+
+  .placeholder {
+    color: #888;
+  }
+
+  .dropdownMenu {
+    background: #2a2a2a;
+    border-color: rgba(31, 167, 80, 0.3);
+  }
+
+  .searchContainer {
+    border-bottom-color: rgba(31, 167, 80, 0.2);
+  }
+
+  .searchInput {
+    background: #333;
+    border-color: rgba(31, 167, 80, 0.4);
+    color: #e0e0e0;
+  }
+
+  .searchInput::placeholder {
+    color: #888;
+  }
+
+  .option:hover {
+    background: rgba(31, 167, 80, 0.15);
+  }
+
+  .option.selected {
+    background: rgba(31, 167, 80, 0.2);
+  }
+
+  .noResults {
+    color: #888;
+  }
+
+  .selectedInfo {
+    background: rgba(31, 167, 80, 0.1);
+    color: #4ade80;
+  }
+}

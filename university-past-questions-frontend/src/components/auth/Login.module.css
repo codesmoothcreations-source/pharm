@@ -1,0 +1,173 @@
+/* Import Font - only in root component once */
+.authPage {
+  font-family: 'Josefin Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #eafaf1, #f0fff5);
+  padding: 1rem;
+  transition: background 0.5s ease;
+}
+
+.authContainer {
+  width: 100%;
+  max-width: 450px;
+}
+
+.authCard {
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.authHeader h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #28a745;
+  margin-bottom: 0.3rem;
+  text-align: center;
+}
+
+.authHeader p {
+  font-size: 0.95rem;
+  color: #555;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Error message styling */
+.authError {
+  display: flex;
+  align-items: center;
+  background: #fdecea;
+  border: 1px solid #f5c6cb;
+  color: #a94442;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  animation: authFadeIn 0.5s ease;
+}
+
+.errorIcon {
+  font-weight: 700;
+  margin-right: 0.5rem;
+}
+
+.errorMessage {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Form elements */
+.authForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.formInput {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.formInput:focus {
+  border-color: #28a745;
+  outline: none;
+  box-shadow: 0 4px 10px rgba(40, 167, 69, 0.25);
+}
+
+/* Forgot password */
+.formOptions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.forgotPassword {
+  font-size: 0.85rem;
+  color: #28a745;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.forgotPassword:hover {
+  color: #1e7e34;
+}
+
+/* Button */
+.authButton {
+  padding: 0.65rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #28a745;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
+.authButton:hover {
+  background-color: #1e7e34;
+  transform: translateY(-2px) scale(1.02);
+}
+
+.authButton:disabled {
+  background-color: #a1d6a1;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Footer */
+.authFooter {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.authLink {
+  color: #28a745;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.authLink:hover {
+  color: #1e7e34;
+  text-decoration: underline;
+}
+
+/* Demo hint */
+.demoHint {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* Scoped animations */
+@keyframes authFadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}

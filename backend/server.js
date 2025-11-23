@@ -75,7 +75,15 @@ app.use(helmet({
                 "blob:",
                 "http://localhost:5001"
             ],
-            connectSrc: ["'self'", "https://api.cloudinary.com", "http://localhost:5001", "wss:", "ws:"],
+            connectSrc: [
+                "'self'", 
+                "https://api.cloudinary.com", 
+                "http://localhost:5001", 
+                "https://www.google-analytics.com",
+                "https://pharm-wtqs.onrender.com",
+                "wss:", 
+                "ws:"
+            ],
             workerSrc: ["'self'", "blob:"],
             frameSrc: ["'self'"],
             objectSrc: ["'none'"],

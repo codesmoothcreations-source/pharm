@@ -49,10 +49,11 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className={styles.logo}>
             <img
-              src="/src/assets/logo.jpeg"
+              src="/logo.jpeg"
               alt="University Past Questions"
               className={styles.logoImage}
               onError={(e) => {
+                console.error('Logo failed to load:', e.target.src);
                 // Fallback to icon if logo doesn't exist
                 e.target.style.display = 'none'
                 e.target.nextSibling.style.display = 'flex'

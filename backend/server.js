@@ -72,9 +72,10 @@ app.use(helmet({
                 "'self'", 
                 "'unsafe-inline'", 
                 "'unsafe-eval'",
-                "blob:"
+                "blob:",
+                "http://localhost:5001"
             ],
-            connectSrc: ["'self'", "https://api.cloudinary.com", "wss:", "ws:"],
+            connectSrc: ["'self'", "https://api.cloudinary.com", "http://localhost:5001", "wss:", "ws:"],
             workerSrc: ["'self'", "blob:"],
             frameSrc: ["'self'"],
             objectSrc: ["'none'"],

@@ -66,10 +66,19 @@ app.use(helmet({
         directives: {
             defaultSrc: ["'self'"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
             imgSrc: ["'self'", "data:", "https:", "blob:"],
-            scriptSrc: ["'self'"],
-            connectSrc: ["'self'", "https://api.cloudinary.com"]
+            scriptSrc: [
+                "'self'", 
+                "'unsafe-inline'", 
+                "'unsafe-eval'",
+                "blob:"
+            ],
+            connectSrc: ["'self'", "https://api.cloudinary.com", "wss:", "ws:"],
+            workerSrc: ["'self'", "blob:"],
+            frameSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            upgradeInsecureRequests: null
         }
     },
     crossOriginEmbedderPolicy: false
@@ -102,7 +111,11 @@ app.use('/api/auth/', authLimiter);
 // CORS configuration with strict settings
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production' 
-        ? [process.env.FRONTEND_URL]
+        ? [
+            process.env.FRONTEND_URL, 
+            'https://pharm-wtqs.onrender.com',
+            /\.onrender\.com$/
+          ]
         : ['http://localhost:3000', 'http://localhost:5173'],
     credentials: true,
     optionsSuccessStatus: 200,

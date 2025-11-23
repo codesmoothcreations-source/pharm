@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+// Use relative API URL in production, custom URL in development
+const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
 export const apiClient = {
   async get(url, token) {

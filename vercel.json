@@ -1,0 +1,1 @@
+{"buildCommand": "cd university-past-questions-frontend && npm run build", "outputDirectory": "university-past-questions-frontend/dist", "installCommand": "cd university-past-questions-frontend && npm install", "devCommand": "cd university-past-questions-frontend && npm run dev"}

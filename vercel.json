@@ -1,1 +1,1 @@
-{"buildCommand": "cd university-past-questions-frontend && npm run build", "outputDirectory": "university-past-questions-frontend/dist", "installCommand": "cd university-past-questions-frontend && npm install", "devCommand": "cd university-past-questions-frontend && npm run dev"}
+{"builds": [{"src": "university-past-questions-frontend/package.json", "use": "@vercel/static-build", "config": {"distDir": "university-past-questions-frontend/dist"}}], "routes": [{"src": "/(.*)", "dest": "university-past-questions-frontend/dist/$1"}]}

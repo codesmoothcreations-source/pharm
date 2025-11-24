@@ -40,18 +40,67 @@ function App() {
           <main className="main-content">
             <Suspense fallback={<PageLoader />}>
               <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Home />} />
-                <Route path="/courses" element={<Courses />} />
-                <Route path="/courses/:id" element={<CourseDetail />} />
-                <Route path="/past-questions" element={<PastQuestions />} />
-                <Route path="/preview/:id" element={<Preview />} />
-                <Route path="/videos" element={<Videos />} />
-                <Route path="/search" element={<Search />} />
+                {/* Public Routes - Only Authentication Pages */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 
-                {/* Protected Routes - Regular Users */}
+                {/* Protected Routes - ALL application features require authentication */}
+                <Route
+                  path="/"
+                  element={
+                    <ProtectedRoute>
+                      <Home />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/courses"
+                  element={
+                    <ProtectedRoute>
+                      <Courses />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/courses/:id"
+                  element={
+                    <ProtectedRoute>
+                      <CourseDetail />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/past-questions"
+                  element={
+                    <ProtectedRoute>
+                      <PastQuestions />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/preview/:id"
+                  element={
+                    <ProtectedRoute>
+                      <Preview />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/videos"
+                  element={
+                    <ProtectedRoute>
+                      <Videos />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/search"
+                  element={
+                    <ProtectedRoute>
+                      <Search />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/profile"
                   element={

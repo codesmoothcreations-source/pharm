@@ -590,3 +590,204 @@
 .btn-primary:hover::before, .btn-outline:hover::before {
   left: 100%;
 }
+
+/* Inline Viewer Modal Styles */
+.inline-viewer-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.inline-viewer-modal.fullscreen {
+  background: rgba(0, 0, 0, 0.98);
+}
+
+.inline-viewer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.inline-viewer-header h3 {
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.viewer-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.viewer-controls .btn {
+  padding: 8px 12px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+.viewer-controls .btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: none;
+}
+
+.viewer-controls .btn-danger {
+  background: rgba(220, 38, 38, 0.8);
+  border-color: rgba(220, 38, 38, 0.8);
+}
+
+.viewer-controls .btn-danger:hover {
+  background: rgba(220, 38, 38, 1);
+}
+
+.inline-viewer-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: auto;
+}
+
+.image-viewer {
+  max-width: 100%;
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inline-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.pdf-viewer {
+  width: 100%;
+  height: 100%;
+  max-width: 1000px;
+  max-height: 800px;
+}
+
+.inline-pdf {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.docx-viewer {
+  width: 100%;
+  height: 100%;
+  max-width: 1000px;
+  max-height: 800px;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Button enhancements */
+.btn-secondary {
+  background: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* File icon enhancements */
+.file-icon.word {
+  color: #2563eb;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+  flex: 1;
+  min-width: 140px;
+}
+
+/* Responsive design for inline viewer */
+@media (max-width: 768px) {
+  .inline-viewer-header {
+    padding: 15px 20px;
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .inline-viewer-header h3 {
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  .viewer-controls {
+    justify-content: center;
+  }
+
+  .inline-viewer-content {
+    padding: 10px;
+  }
+
+  .pdf-viewer,
+  .docx-viewer {
+    max-width: 100%;
+    max-height: calc(100vh - 120px);
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons .btn {
+    flex: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .inline-viewer-header {
+    padding: 12px 15px;
+  }
+
+  .viewer-controls .btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .inline-viewer-content {
+    padding: 5px;
+  }
+}

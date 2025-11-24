@@ -125,7 +125,7 @@ const corsOptions = {
             'https://pharm-wtqs.onrender.com',
             /\.onrender\.com$/
           ]
-        : ['http://localhost:3000', 'http://localhost:5173'],
+        : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5173'],
     credentials: true,
     optionsSuccessStatus: 200,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -174,6 +174,15 @@ const __dirname = dirname(__filename);
 
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Serve frontend static files in development for testing
+if (process.env.NODE_ENV === "development" && process.env.SERVE_FRONTEND === "true") {
+    app.use(express.static(path.join(__dirname, "../university-past-questions-frontend/dist")));
+    
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "../university-past-questions-frontend", "dist", "index.html"));
+    });
+}
 
 // ==================== API ROUTES ====================
 

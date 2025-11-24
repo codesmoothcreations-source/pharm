@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useSearchParams, useLocation } from 'react-router-dom'
-import { FaBook, FaSearch, FaFilter, FaSort, FaDownload, FaEye, FaCalendar, FaImage, FaFile, FaTrash } from 'react-icons/fa'
+import { FaBook, FaSearch, FaFilter, FaSort, FaDownload, FaEye, FaCalendar, FaImage, FaFile, FaTrash, FaExpand } from 'react-icons/fa'
 import { apiClient } from '../api/apiClient'
+import DocxViewer from '../components/DocxViewer'
 import './PastQuestions.css'
 
 const PastQuestions = () => {
@@ -13,6 +14,8 @@ const PastQuestions = () => {
   const [downloadedItems, setDownloadedItems] = useState([])
   const [showGallery, setShowGallery] = useState(false)
   const [deletingItems, setDeletingItems] = useState(new Set())
+  const [showInlineViewer, setShowInlineViewer] = useState(false)
+  const [selectedQuestion, setSelectedQuestion] = useState(null)
   
   // Dynamic filter options from database
   const [filterOptions, setFilterOptions] = useState({
@@ -86,12 +89,23 @@ const PastQuestions = () => {
   const fetchQuestions = async () => {
     try {
       setLoading(true)
+      setError('')
+      
+      console.log('Fetching all questions...')
       
       // Fetch ALL questions without any filters initially
       const response = await apiClient.get('/past-questions')
       
+      console.log('Questions API Response:', response)
+      
       if (response.success) {
         const questionsData = response.data || []
+        
+        // Log the first question's fileUrl to verify Cloudinary URLs
+        if (questionsData.length > 0) {
+          console.log('First question fileUrl:', questionsData[0].fileUrl)
+        }
+        
         setQuestions(questionsData)
       } else {
         throw new Error(response.message || 'Failed to fetch questions')
@@ -223,16 +237,28 @@ const PastQuestions = () => {
 
   const handleDownload = async (question) => {
     try {
-      // Use primary API URL as base
-      const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001'
+      // Helper function to construct proper file URL
+      const getFileUrl = (fileUrl) => {
+        if (!fileUrl) return null
+        
+        // Check if URL is already a complete URL (Cloudinary URLs, etc.)
+        if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+          return fileUrl
+        }
+        
+        // Remove any leading slashes and replace backslashes for local URLs
+        const cleanPath = fileUrl.replace(/^\/*/, '').replace(/\\/g, '/')
+        
+        // Use primary API URL as base
+        const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001'
+        return `${baseUrl}/${cleanPath}`
+      }
       
-      // Clean the file URL properly
-      let cleanFileUrl = question.fileUrl.replace(/^\/*/, '').replace(/\\/g, '/')
-      
-      // Remove uploads prefix if present to avoid double uploads/
-      cleanFileUrl = cleanFileUrl.replace(/^uploads\//, '')
-      
-      const downloadUrl = `${baseUrl}/uploads/${cleanFileUrl}`
+      // Construct proper file URL
+      const downloadUrl = getFileUrl(question.fileUrl)
+      if (!downloadUrl) {
+        throw new Error('File URL not found')
+      }
       
       console.log('Downloading from:', downloadUrl, 'for file type:', question.fileType)
       
@@ -346,9 +372,29 @@ const PastQuestions = () => {
         return <FaImage className="file-icon image" />
       case 'pdf':
         return <FaFile className="file-icon pdf" />
+      case 'docx':
+      case 'doc':
+        return <FaFile className="file-icon word" />
       default:
         return <FaFile className="file-icon" />
     }
+  }
+
+  const isViewableInline = (fileType, fileUrl) => {
+    if (fileType === 'image') return true
+    if (fileType === 'pdf') return true
+    if (fileType === 'docx' || fileUrl?.includes('.docx')) return true
+    return false
+  }
+
+  const handleInlineView = (question) => {
+    setSelectedQuestion(question)
+    setShowInlineViewer(true)
+  }
+
+  const closeInlineViewer = () => {
+    setShowInlineViewer(false)
+    setSelectedQuestion(null)
   }
 
   const formatFileSize = (bytes) => {
@@ -704,15 +750,24 @@ const PastQuestions = () => {
                     </div>
 
                     <div className="question-actions">
+                      {isViewableInline(question.fileType, question.fileUrl) && (
+                        <button
+                          className="btn btn-secondary btn-sm"
+                          onClick={() => handleInlineView(question)}
+                        >
+                          <FaEye />
+                          Quick View
+                        </button>
+                      )}
                       <button
-                        className="btn btn-secondary btn-sm"
+                        className="btn btn-primary btn-sm"
                         onClick={() => handleView(question)}
                       >
                         <FaEye />
-                        View
+                        Full Preview
                       </button>
                       <button
-                        className="btn btn-primary btn-sm"
+                        className="btn btn-outline btn-sm"
                         onClick={() => handleDownload(question)}
                         disabled={!question.fileUrl}
                       >
@@ -727,6 +782,57 @@ const PastQuestions = () => {
           )}
         </div>
       </div>
+
+      {/* Inline Viewer Modal */}
+      {showInlineViewer && selectedQuestion && (
+        <div className="inline-viewer-modal">
+          <div className="inline-viewer-header">
+            <h3>{selectedQuestion.title}</h3>
+            <div className="viewer-controls">
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={closeInlineViewer}
+              >
+                ×
+              </button>
+            </div>
+          </div>
+          
+          <div className="inline-viewer-content">
+            {selectedQuestion.fileType === 'image' && (
+              <div className="image-viewer">
+                <img
+                  src={selectedQuestion.fileUrl}
+                  alt={selectedQuestion.title}
+                  className="inline-image"
+                  onError={(e) => {
+                    console.error('Image failed to load:', selectedQuestion.fileUrl)
+                  }}
+                />
+              </div>
+            )}
+            
+            {selectedQuestion.fileType === 'pdf' && (
+              <div className="pdf-viewer">
+                <iframe
+                  src={selectedQuestion.fileUrl}
+                  className="inline-pdf"
+                  title={selectedQuestion.title}
+                />
+              </div>
+            )}
+            
+            {(selectedQuestion.fileType === 'docx' || selectedQuestion.fileUrl?.includes('.docx')) && (
+              <div className="docx-viewer">
+                <DocxViewer
+                  url={selectedQuestion.fileUrl}
+                  title={selectedQuestion.title}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

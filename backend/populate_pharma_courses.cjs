@@ -63,9 +63,39 @@ async function populatePharmaceuticalCourses() {
         await Course.deleteMany({});
         console.log('✅ Cleared existing courses');
 
+        // Ensure the user's requested Level 200 courses are present (avoid duplicates)
+        const additionalCourses = [
+            // Level 200 - Semester 1
+            { courseCode: 'MIC2001', courseName: 'Basic Pharmaceutical Microbiology', level: '200', semester: '1' },
+            { courseCode: 'MIC2001P', courseName: 'Basic Pharmaceutical Microbiology (Practical Component)', level: '200', semester: '1' },
+            { courseCode: 'THER2001', courseName: 'Therapeutics I', level: '200', semester: '1' },
+            { courseCode: 'MGT2001', courseName: 'Basic Management', level: '200', semester: '1' },
+            { courseCode: 'PCH2001', courseName: 'Physical Chemistry', level: '200', semester: '1' },
+            { courseCode: 'PCH2001P', courseName: 'Physical Chemistry (Practical Component)', level: '200', semester: '1' },
+            { courseCode: 'HSP2001', courseName: 'Hospital Practice III', level: '200', semester: '1' },
+
+            // Level 200 - Semester 2
+            { courseCode: 'QCI2001', courseName: 'Quality Control and Instrumentation Technology I', level: '200', semester: '2' },
+            { courseCode: 'QCI2001P', courseName: 'Quality Control and Instrumentation Technology I (Practical Component)', level: '200', semester: '2' },
+            { courseCode: 'STK2001', courseName: 'Store Keeping', level: '200', semester: '2' },
+            { courseCode: 'ORG2001', courseName: 'Organic Chemistry IV', level: '200', semester: '2' },
+            { courseCode: 'ORG2001P', courseName: 'Organic Chemistry IV (Practical Component)', level: '200', semester: '2' },
+            { courseCode: 'THER2002', courseName: 'Therapeutics II', level: '200', semester: '2' },
+            { courseCode: 'RES2001', courseName: 'Research Methodology', level: '200', semester: '2' },
+            { courseCode: 'STAT2001', courseName: 'Statistics', level: '200', semester: '2' }
+        ];
+
+        // Merge additional courses into the main list without duplicating by courseCode
+        const allCourses = [...pharmaceuticalCourses];
+        additionalCourses.forEach((c) => {
+            if (!allCourses.some(existing => existing.courseCode === c.courseCode)) {
+                allCourses.push(c);
+            }
+        });
+
         // Insert new pharmaceutical sciences courses
         console.log('💊 Inserting pharmaceutical sciences course catalogue...');
-        const insertedCourses = await Course.insertMany(pharmaceuticalCourses);
+        const insertedCourses = await Course.insertMany(allCourses);
         console.log(`✅ Successfully inserted ${insertedCourses.length} pharmaceutical sciences courses`);
 
         // Display summary by level and semester

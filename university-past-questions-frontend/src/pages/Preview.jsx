@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { FaDownload, FaEye, FaArrowLeft, FaFilePdf, FaImage, FaCalendar, FaBook, FaUniversity, FaUser } from 'react-icons/fa'
+import { FaDownload, FaEye, FaArrowLeft, FaFilePdf, FaImage, FaCalendar, FaBook, FaUniversity, FaUser, FaFileWord, FaExpand, FaCompress, FaExternalLinkAlt } from 'react-icons/fa'
 import { getQuestionById, updateQuestion } from '../api/pastQuestionsApi'
+import { apiClient } from '../api/apiClient'
 import LoadingSpinner from '../components/common/LoadingSpinner'
+import DocxViewer from '../components/DocxViewer'
 import './Preview.css'
 
 const Preview = () => {
@@ -12,20 +14,45 @@ const Preview = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [downloading, setDownloading] = useState(false)
+  const [showInlineView, setShowInlineView] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
         setLoading(true)
-        const response = await getQuestionById(id)
+        setError('')
+        
+        console.log('Fetching question with ID:', id)
+        
+        // Use the correct API endpoint
+        const response = await apiClient.get(`/past-questions/${id}`)
+        
+        console.log('API Response:', response)
+        
         if (response.success) {
-          setQuestion(response.data)
+          const questionData = response.data
+          
+          // Ensure we have the Cloudinary URL
+          if (!questionData.fileUrl) {
+            throw new Error('No file URL found for this question')
+          }
+          
+          // Log the file URL to verify it's the Cloudinary URL
+          console.log('File URL from database:', questionData.fileUrl)
+          
+          // Verify this is a Cloudinary URL
+          if (!questionData.fileUrl.includes('cloudinary.com')) {
+            console.warn('Warning: File URL does not appear to be a Cloudinary URL:', questionData.fileUrl)
+          }
+          
+          setQuestion(questionData)
         } else {
           setError(response.message || 'Question not found')
         }
       } catch (err) {
         console.error('Error fetching question:', err)
-        setError('Failed to load question details')
+        setError(err.message || 'Failed to load question details')
       } finally {
         setLoading(false)
       }
@@ -38,14 +65,28 @@ const Preview = () => {
 
   // Helper function to construct proper file URL
   const getFileUrl = (fileUrl) => {
-    if (!fileUrl) return null
+    if (!fileUrl) {
+      console.warn('No fileUrl provided')
+      return null
+    }
     
-    // Remove any leading slashes and replace backslashes
+    console.log('Processing fileUrl:', fileUrl)
+    
+    // Check if URL is already a complete URL (Cloudinary URLs, etc.)
+    if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+      console.log('Using direct URL:', fileUrl)
+      return fileUrl
+    }
+    
+    // Remove any leading slashes and replace backslashes for local URLs
     const cleanPath = fileUrl.replace(/^\/*/, '').replace(/\\/g, '/')
     
     // Construct full URL using environment variable or default
     const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001'
-    return `${baseUrl}/${cleanPath}`
+    const fullUrl = `${baseUrl}/${cleanPath}`
+    
+    console.log('Constructed local URL:', fullUrl)
+    return fullUrl
   }
 
   // Helper function to get file extension
@@ -58,7 +99,27 @@ const Preview = () => {
     }
     if (fileType === 'doc' || fileUrl?.includes('.doc')) return 'doc'
     if (fileUrl?.includes('.docx')) return 'docx'
+    if (fileType === 'docx') return 'docx'
     return 'pdf' // default
+  }
+
+  const isViewableInline = (fileType, fileUrl) => {
+    if (fileType === 'image') return true
+    if (fileType === 'pdf') return true
+    if (fileType === 'docx' || fileUrl?.includes('.docx')) return true
+    return false
+  }
+
+  const getCloudinaryTransformUrl = (url, width = 800, height = 600) => {
+    if (!url?.includes('cloudinary.com')) return url
+    
+    // Extract the public URL parts
+    const parts = url.split('/upload/')
+    if (parts.length !== 2) return url
+    
+    // Add transformation parameters
+    const transformation = `c_limit,w_${width},h_${height},q_auto,f_auto`
+    return `${parts[0]}/upload/${transformation}/${parts[1]}`
   }
 
   const handleDownload = async () => {
@@ -163,9 +224,27 @@ const Preview = () => {
         return <FaFilePdf className="file-icon pdf" />
       case 'image':
         return <FaImage className="file-icon image" />
+      case 'docx':
+      case 'doc':
+        return <FaFileWord className="file-icon word" />
       default:
         return <FaFilePdf className="file-icon" />
     }
+  }
+
+  const handleInlineView = () => {
+    setShowInlineView(true)
+    setIsFullscreen(false)
+  }
+
+  const handleFullscreen = () => {
+    setIsFullscreen(true)
+    setShowInlineView(true)
+  }
+
+  const closeInlineView = () => {
+    setShowInlineView(false)
+    setIsFullscreen(false)
   }
 
   if (loading) {
@@ -214,6 +293,24 @@ const Preview = () => {
         {/* Main Content */}
         <div className="preview-content">
           <div className="question-details">
+            {/* Debug Info */}
+            {process.env.NODE_ENV === 'development' && (
+              <div style={{ 
+                background: '#f0f0f0', 
+                padding: '10px', 
+                marginBottom: '20px', 
+                borderRadius: '5px',
+                fontSize: '12px',
+                fontFamily: 'monospace'
+              }}>
+                <strong>Debug Info:</strong><br />
+                Question ID: {id}<br />
+                File URL: {question.fileUrl}<br />
+                File Type: {question.fileType}<br />
+                API Response: {JSON.stringify(question, null, 2)}
+              </div>
+            )}
+
             {/* File Preview */}
             <div className="file-preview-section">
               <div className="file-preview-card">
@@ -233,22 +330,44 @@ const Preview = () => {
 
               {/* Action Buttons */}
               <div className="action-buttons">
+                {isViewableInline(question.fileType, question.fileUrl) && (
+                  <>
+                    <button
+                      className="btn btn-primary btn-lg"
+                      onClick={handleInlineView}
+                      disabled={!question.fileUrl}
+                    >
+                      <FaEye />
+                      View Inline
+                    </button>
+                    <button
+                      className="btn btn-secondary btn-lg"
+                      onClick={handleFullscreen}
+                      disabled={!question.fileUrl}
+                    >
+                      <FaExpand />
+                      Fullscreen
+                    </button>
+                  </>
+                )}
+                
                 <button
-                  className="btn btn-primary btn-lg"
+                  className="btn btn-outline btn-lg"
                   onClick={handleView}
                   disabled={!question.fileUrl}
                 >
-                  <FaEye />
-                  Preview File
+                  <FaExternalLinkAlt />
+                  Open in New Tab
                 </button>
-                {/* <button
+                
+                <button
                   className="btn btn-outline btn-lg"
                   onClick={handleDownload}
                   disabled={downloading || !question.fileUrl}
                 >
                   <FaDownload />
                   {downloading ? 'Downloading...' : 'Download'}
-                </button> */}
+                </button>
               </div>
             </div>
 
@@ -367,6 +486,64 @@ const Preview = () => {
           )}
         </div>
       </div>
+
+      {/* Inline Viewer Modal */}
+      {showInlineView && question && (
+        <div className={`inline-viewer-modal ${isFullscreen ? 'fullscreen' : ''}`}>
+          <div className="inline-viewer-header">
+            <h3>{question.title}</h3>
+            <div className="viewer-controls">
+              <button
+                className="btn btn-sm"
+                onClick={() => setIsFullscreen(!isFullscreen)}
+                title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+              >
+                {isFullscreen ? <FaCompress /> : <FaExpand />}
+              </button>
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={closeInlineView}
+              >
+                ×
+              </button>
+            </div>
+          </div>
+          
+          <div className="inline-viewer-content">
+            {question.fileType === 'image' && (
+              <div className="image-viewer">
+                <img
+                  src={getCloudinaryTransformUrl(getFileUrl(question.fileUrl), isFullscreen ? 1200 : 800, isFullscreen ? 800 : 600)}
+                  alt={question.title}
+                  className="inline-image"
+                  onError={(e) => {
+                    e.target.src = getFileUrl(question.fileUrl)
+                  }}
+                />
+              </div>
+            )}
+            
+            {question.fileType === 'pdf' && (
+              <div className="pdf-viewer">
+                <iframe
+                  src={getFileUrl(question.fileUrl)}
+                  className="inline-pdf"
+                  title={question.title}
+                />
+              </div>
+            )}
+            
+            {(question.fileType === 'docx' || question.fileUrl?.includes('.docx')) && (
+              <div className="docx-viewer">
+                <DocxViewer
+                  url={getFileUrl(question.fileUrl)}
+                  title={question.title}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

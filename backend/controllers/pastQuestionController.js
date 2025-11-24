@@ -1,6 +1,24 @@
 import PastQuestion from '../models/PastQuestion.js';
 import Course from '../models/Course.js';
+import { cloudinary } from '../config/cloudinary.js';
 import path from 'path';
+
+// Helper function to delete file from Cloudinary
+const deleteFileFromCloudinary = async (cloudinaryPublicId) => {
+    try {
+        if (cloudinaryPublicId) {
+            console.log('Deleting file from Cloudinary:', cloudinaryPublicId);
+            
+            const result = await cloudinary.uploader.destroy(cloudinaryPublicId);
+            console.log('Cloudinary deletion result:', result);
+            
+            return result;
+        }
+    } catch (error) {
+        console.error('Error deleting file from Cloudinary:', error);
+        // Don't throw error - file deletion failure shouldn't block database deletion
+    }
+};
 
 // Helper function to handle course creation/lookup
 const handleCourseReference = async (courseData) => {
@@ -209,11 +227,28 @@ const createPastQuestion = async (req, res) => {
         // Add uploader to request body
         req.body.uploader = req.user.id;
 
-        // Add file information
-        req.body.fileUrl = req.file.path;
-        req.body.fileType = req.file.mimetype.startsWith('image/') ? 'image' :
-                           req.file.mimetype === 'application/pdf' ? 'pdf' : 'doc';
-        req.body.fileSize = req.file.size;
+        // Add file information from Cloudinary
+        console.log('Cloudinary result check:', {
+            hasCloudinaryResult: !!req.file.cloudinaryResult,
+            filePath: req.file.path,
+            fileCloudinaryResult: req.file.cloudinaryResult
+        });
+        
+        if (req.file.cloudinaryResult) {
+            console.log('Using Cloudinary URL:', req.file.cloudinaryResult.secure_url);
+            req.body.fileUrl = req.file.cloudinaryResult.secure_url;
+            req.body.fileType = req.file.mimetype.startsWith('image/') ? 'image' :
+                               req.file.mimetype === 'application/pdf' ? 'pdf' : 'doc';
+            req.body.fileSize = req.file.cloudinaryResult.bytes;
+            req.body.cloudinaryPublicId = req.file.cloudinaryResult.public_id;
+        } else {
+            console.log('WARNING: No Cloudinary result, falling back to local path:', req.file.path);
+            // Fallback to original file info if Cloudinary upload didn't complete
+            req.body.fileUrl = req.file.path;
+            req.body.fileType = req.file.mimetype.startsWith('image/') ? 'image' :
+                               req.file.mimetype === 'application/pdf' ? 'pdf' : 'doc';
+            req.body.fileSize = req.file.size;
+        }
 
         // Auto-approve if user is admin
         if (req.user.role === 'admin') {
@@ -411,10 +446,18 @@ const updatePastQuestion = async (req, res) => {
 
         // Only update file information if a new file was uploaded
         if (req.file) {
-            req.body.fileUrl = req.file.path;
-            req.body.fileType = req.file.mimetype.startsWith('image/') ? 'image' :
-                               req.file.mimetype === 'application/pdf' ? 'pdf' : 'doc';
-            req.body.fileSize = req.file.size;
+            if (req.file.cloudinaryResult) {
+                req.body.fileUrl = req.file.cloudinaryResult.secure_url;
+                req.body.fileType = req.file.mimetype.startsWith('image/') ? 'image' :
+                                   req.file.mimetype === 'application/pdf' ? 'pdf' : 'doc';
+                req.body.fileSize = req.file.cloudinaryResult.bytes;
+                req.body.cloudinaryPublicId = req.file.cloudinaryResult.public_id;
+            } else {
+                req.body.fileUrl = req.file.path;
+                req.body.fileType = req.file.mimetype.startsWith('image/') ? 'image' :
+                                   req.file.mimetype === 'application/pdf' ? 'pdf' : 'doc';
+                req.body.fileSize = req.file.size;
+            }
         }
 
         // Process tags if they're a comma-separated string
@@ -487,6 +530,10 @@ const deletePastQuestion = async (req, res) => {
             });
         }
 
+        // Delete file from Cloudinary if it exists
+        await deleteFileFromCloudinary(pastQuestion.cloudinaryPublicId);
+
+        // Delete the database record
         await PastQuestion.findByIdAndDelete(req.params.id);
 
         res.json({
@@ -560,9 +607,24 @@ const downloadPastQuestion = async (req, res) => {
         pastQuestion.downloadCount += 1;
         await pastQuestion.save();
 
-        // Serve the file
-        const filePath = path.join(__dirname, '..', pastQuestion.fileUrl);
-        res.download(filePath, `${pastQuestion.title}.${pastQuestion.fileType === 'pdf' ? 'pdf' : pastQuestion.fileType === 'image' ? 'png' : 'doc'}`);
+        // Check if it's a Cloudinary URL or local file
+        if (pastQuestion.fileUrl && pastQuestion.fileUrl.includes('cloudinary.com')) {
+            // For Cloudinary files, redirect to the URL (which will trigger download for most files)
+            const fileExtension = pastQuestion.fileType === 'pdf' ? 'pdf' : 
+                                 pastQuestion.fileType === 'image' ? 'png' : 'doc';
+            const filename = `${pastQuestion.title}.${fileExtension}`;
+            
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            res.redirect(pastQuestion.fileUrl);
+        } else {
+            // Fallback for local files
+            const filePath = path.join(__dirname, '..', pastQuestion.fileUrl);
+            const fileExtension = pastQuestion.fileType === 'pdf' ? 'pdf' : 
+                                 pastQuestion.fileType === 'image' ? 'png' : 'doc';
+            const filename = `${pastQuestion.title}.${fileExtension}`;
+            
+            res.download(filePath, filename);
+        }
 
     } catch (error) {
         console.error('Download past question error:', error);

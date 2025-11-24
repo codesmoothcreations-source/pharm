@@ -240,10 +240,26 @@ const CourseDetail = () => {
 
   const handleDownload = (question) => {
     if (question.fileUrl) {
+      // Helper function to construct proper file URL
+      const getFileUrl = (fileUrl) => {
+        if (!fileUrl) return null
+        
+        // Check if URL is already a complete URL (Cloudinary URLs, etc.)
+        if (fileUrl.startsWith('http://') || fileUrl.startsWith('https://')) {
+          return fileUrl
+        }
+        
+        // Remove any leading slashes and replace backslashes for local URLs
+        const cleanPath = fileUrl.replace(/^\/*/, '').replace(/\\/g, '/')
+        
+        // Construct full URL using environment variable or default
+        const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001'
+        return `${baseUrl}/${cleanPath}`
+      }
+      
       const link = document.createElement('a')
-      const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5001'
-      const cleanFileUrl = question.fileUrl.replace(/^\/*/, '').replace(/\\/g, '/')
-      link.href = `${baseUrl}/${cleanFileUrl}`
+      const downloadUrl = getFileUrl(question.fileUrl)
+      link.href = downloadUrl
       link.download = `${question.title || 'past_question'}.pdf`
       link.target = '_blank'
       document.body.appendChild(link)

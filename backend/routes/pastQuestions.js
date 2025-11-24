@@ -11,7 +11,8 @@ import {
     updateQuestionMetadata
 } from '../controllers/pastQuestionController.js';
 import { protect, authorize } from '../middleware/auth.js';
-import upload from '../middleware/upload.js';
+import upload from '../middleware/uploadCloudinary.js';
+import { uploadToCloudinary } from '../middleware/uploadCloudinary.js';
 
 const router = express.Router();
 
@@ -36,7 +37,7 @@ router.route('/:id/download')
 router.use(protect);
 
 router.route('/')
-    .post(upload.single('file'), createPastQuestion);
+    .post(upload.single('file'), uploadToCloudinary, createPastQuestion);
 
 // PUT for metadata-only updates (no file required)
 router.route('/:id/metadata')
@@ -44,7 +45,7 @@ router.route('/:id/metadata')
 
 // PUT for full updates with optional file upload
 router.route('/:id')
-    .put(upload.single('file'), updatePastQuestion)
+    .put(upload.single('file'), uploadToCloudinary, updatePastQuestion)
     .delete(deletePastQuestion);
 
 // Admin only routes

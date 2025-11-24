@@ -43,6 +43,9 @@ const pastQuestionSchema = new mongoose.Schema({
         type: Number, // Size in bytes
         required: true
     },
+    cloudinaryPublicId: {
+        type: String // Cloudinary public ID for file management
+    },
     uploader: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

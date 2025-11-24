@@ -66,26 +66,28 @@ const Header = () => {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className={styles.nav}>
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`${styles.navLink} ${isActiveRoute(link.path) ? styles.active : ''}`}
-              >
-                {link.label}
-              </Link>
-            ))}
-            {isAuthenticated && isAdmin && (
-              <Link
-                to="/admin"
-                className={`${styles.navLink} ${isActiveRoute('/admin') ? styles.active : ''}`}
-              >
-                Admin
-              </Link>
-            )}
-          </nav>
+          {/* Desktop Navigation - Only show when authenticated */}
+          {isAuthenticated && (
+            <nav className={styles.nav}>
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`${styles.navLink} ${isActiveRoute(link.path) ? styles.active : ''}`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              {isAuthenticated && isAdmin && (
+                <Link
+                  to="/admin"
+                  className={`${styles.navLink} ${isActiveRoute('/admin') ? styles.active : ''}`}
+                >
+                  Admin
+                </Link>
+              )}
+            </nav>
+          )}
 
           {/* Actions */}
           <div className={styles.headerActions}>
@@ -116,19 +118,21 @@ const Header = () => {
               </div>
             )}
 
-            {/* Mobile Menu Toggle */}
-            <button
-              className={styles.mobileMenuToggle}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? <FaTimes /> : <FaBars />}
-            </button>
+            {/* Mobile Menu Toggle - Only show when authenticated */}
+            {isAuthenticated && (
+              <button
+                className={styles.mobileMenuToggle}
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="Toggle menu"
+              >
+                {isMenuOpen ? <FaTimes /> : <FaBars />}
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
+        {/* Mobile Navigation - Only show when authenticated */}
+        {isMenuOpen && isAuthenticated && (
           <nav className={styles.mobileNav}>
             {navLinks.map((link) => (
               <Link
@@ -168,6 +172,14 @@ const Header = () => {
               </div>
             )}
           </nav>
+        )}
+
+        {/* Mobile Authentication Section - Show when not authenticated */}
+        {isMenuOpen && !isAuthenticated && (
+          <div className={styles.mobileAuth}>
+            <Link to="/login" className={`${styles.btn} ${styles.btnOutline}`}>Sign In</Link>
+            <Link to="/register" className={`${styles.btn} ${styles.btnPrimary}`}>Join Now</Link>
+          </div>
         )}
       </div>
     </header>

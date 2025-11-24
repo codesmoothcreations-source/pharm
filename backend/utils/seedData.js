@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import Course from '../models/Course.js';
 import User from '../models/User.js';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
@@ -81,17 +82,23 @@ const seedCourses = async () => {
         await Course.insertMany(allCourses);
         console.log(`✅ ${allCourses.length} courses seeded successfully`);
 
-        // Create default admin user if not exists
-        const adminExists = await User.findOne({ email: process.env.ADMIN_EMAIL });
-        if (!adminExists) {
-            await User.create({
-                name: 'System Administrator',
-                email: process.env.ADMIN_EMAIL,
-                password: process.env.ADMIN_PASSWORD,
-                role: 'admin',
-                department: 'Pharmacy'
-            });
-            console.log('✅ Default admin user created');
+        // Create default admin user if environment variables are provided
+        if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+            const adminExists = await User.findOne({ email: process.env.ADMIN_EMAIL });
+            if (!adminExists) {
+                await User.create({
+                    name: 'System Administrator',
+                    email: process.env.ADMIN_EMAIL,
+                    password: process.env.ADMIN_PASSWORD,
+                    role: 'admin',
+                    department: 'Pharmacy'
+                });
+                console.log('✅ Default admin user created');
+            } else {
+                console.log('ℹ️  Admin user already exists');
+            }
+        } else {
+            console.warn('⚠️  ADMIN_EMAIL or ADMIN_PASSWORD not set — skipping default admin creation');
         }
 
         console.log('🎉 Database seeding completed!');
@@ -103,8 +110,10 @@ const seedCourses = async () => {
     }
 };
 
-// Run seeding if called directly
-if (require.main === module) {
+// Run seeding if called directly (ESM equivalent to `require.main === module`)
+const __filename = fileURLToPath(import.meta.url);
+if (process.argv[1] === __filename) {
+    // If executed directly via `node utils/seedData.js` then run
     seedCourses();
 }
 

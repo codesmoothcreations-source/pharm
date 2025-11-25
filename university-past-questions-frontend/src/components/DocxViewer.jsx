@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { FaFileWord, FaDownload, FaExternalLinkAlt, FaSpinner } from 'react-icons/fa'
+import { useGlobalToast } from './common/GlobalToast'
+import { instantDownload } from '../utils/downloadUtils'
 import './DocxViewer.css'
 
 const DocxViewer = ({ url, title }) => {
+  const { showSuccess, showError } = useGlobalToast()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [viewMode, setViewMode] = useState('viewer') // 'viewer' or 'google-docs'
@@ -35,14 +38,15 @@ const DocxViewer = ({ url, title }) => {
     window.open(googleDocsUrl, '_blank', 'noopener,noreferrer')
   }
 
-  const downloadDocx = () => {
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${title || 'document'}.docx`
-    link.target = '_blank'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  const downloadDocx = async () => {
+    try {
+      const fileName = `${title || 'document'}.docx`
+      await instantDownload(url, fileName)
+      showSuccess(`Downloaded "${fileName}" successfully!`)
+    } catch (error) {
+      console.error('Download failed:', error)
+      showError(`Download failed: ${error.message}. Please try again.`)
+    }
   }
 
   const openDirectly = () => {

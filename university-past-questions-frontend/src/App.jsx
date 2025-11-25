@@ -1,11 +1,13 @@
 import React, { Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { ToastProvider } from './components/common/GlobalToast'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import AdminRoute from './components/auth/AdminRoute'
 import Header from './components/common/Header'
 import Footer from './components/common/Footer'
 import LoadingSpinner from './components/common/LoadingSpinner'
+import PerformanceMonitor from './components/common/PerformanceMonitor'
 import './App.css'
 
 // Lazy load components for better performance
@@ -31,15 +33,17 @@ const PageLoader = () => (
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="App">
-          <Header />
-          <br />
-          <br />
-          <main className="main-content">
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
+    <PerformanceMonitor>
+      <ToastProvider>
+        <AuthProvider>
+          <Router>
+            <div className="App">
+            <Header />
+            <br />
+            <br />
+            <main className="main-content">
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
                 {/* Public Routes - Only Authentication Pages */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
@@ -130,6 +134,8 @@ function App() {
         </div>
       </Router>
     </AuthProvider>
+  </ToastProvider>
+</PerformanceMonitor>
   )
 }
 

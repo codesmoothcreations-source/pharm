@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 import { FaGraduationCap, FaFacebook, FaTwitter, FaLinkedin, FaYoutube, FaBook, FaVideo, FaUsers } from 'react-icons/fa'
 import { getAllQuestions } from '../../api/pastQuestionsApi'
 import { apiClient } from '../../api/apiClient'
+import { useAuth } from '../../context/AuthContext'
 import './Footer.css'
 
 const Footer = () => {
+  const { isAuthenticated } = useAuth()
   const currentYear = new Date().getFullYear()
   const [stats, setStats] = useState({
     totalQuestions: 0,
@@ -87,6 +89,11 @@ const Footer = () => {
     { type: "phone", value: "+233 123 456 789", display: "📞 +233 55 160 3553" },
     { type: "location", value: "Pharmacy Department, University Campus", display: "📍 Pharmssag, Past Question "}
   ]
+
+  // Only show footer when user is authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <footer className="footer animate-fadeIn">

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { FaDownload, FaEye, FaArrowLeft, FaFilePdf, FaImage, FaCalendar, FaBook, FaUniversity, FaUser, FaFileWord, FaExpand, FaCompress, FaExternalLinkAlt } from 'react-icons/fa'
+import { FaDownload, FaEye, FaArrowLeft, FaFilePdf, FaImage, FaCalendar, FaBook, FaUniversity, FaUser, FaFileWord, FaExpand, FaCompress, FaExternalLinkAlt, FaPlay } from 'react-icons/fa'
 import { getQuestionById, updateQuestion } from '../api/pastQuestionsApi'
 import { apiClient } from '../api/apiClient'
+import { useGlobalToast } from '../components/common/GlobalToast'
+import { instantDownload, smartDownload } from '../utils/downloadUtils'
 import LoadingSpinner from '../components/common/LoadingSpinner'
 import DocxViewer from '../components/DocxViewer'
 import './Preview.css'
@@ -10,6 +12,7 @@ import './Preview.css'
 const Preview = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { showSuccess, showError } = useGlobalToast()
   const [question, setQuestion] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -142,23 +145,12 @@ const Preview = () => {
         throw new Error('File URL not found')
       }
 
-      // Create download link with proper error handling
-      const link = document.createElement('a')
-      link.href = fileUrl
+      // Create filename with proper extension
       const extension = getFileExtension(question.fileType, question.fileUrl)
       const fileName = `${question.title || 'past_question'}.${extension}`
-      link.download = fileName
-      link.target = '_blank'
-      link.rel = 'noopener noreferrer'
 
-      // Add to DOM and trigger download
-      document.body.appendChild(link)
-      link.click()
-      
-      // Clean up
-      setTimeout(() => {
-        document.body.removeChild(link)
-      }, 100)
+      // Use instant download utility
+      await instantDownload(fileUrl, fileName)
 
       // Update local state
       setQuestion(prev => ({
@@ -166,9 +158,12 @@ const Preview = () => {
         downloadCount: (prev.downloadCount || 0) + 1
       }))
 
+      // Show success toast
+      showSuccess(`Downloaded "${question.title}" successfully!`)
+
     } catch (error) {
       console.error('Download failed:', error)
-      alert('Download failed. Please try again.')
+      showError(`Download failed: ${error.message}. Please try again.`)
     } finally {
       setDownloading(false)
     }
@@ -204,7 +199,7 @@ const Preview = () => {
 
     } catch (error) {
       console.error('View failed:', error)
-      alert('Failed to view file. Please try again.')
+      showError(`Failed to view file: ${error.message}. Please try again.`)
     }
   }
 
@@ -305,9 +300,6 @@ const Preview = () => {
               }}>
                 <strong>Debug Info:</strong><br />
                 Question ID: {id}<br />
-                File URL: {question.fileUrl}<br />
-                File Type: {question.fileType}<br />
-                API Response: {JSON.stringify(question, null, 2)}
               </div>
             )}
 

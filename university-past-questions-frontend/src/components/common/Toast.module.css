@@ -12,6 +12,18 @@
   font-family: 'Josefin Sans', sans-serif;
 }
 
+.globalToastContainer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
 .toast {
   position: relative;
   background: #ffffff;

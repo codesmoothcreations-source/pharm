@@ -81,6 +81,8 @@ app.use(helmet({
                 "http://localhost:5001", 
                 "https://www.google-analytics.com",
                 "https://pharm-wtqs.onrender.com",
+                "https://fonts.googleapis.com",
+                "https://fonts.gstatic.com",
                 "wss:", 
                 "ws:"
             ],
@@ -174,15 +176,6 @@ const __dirname = dirname(__filename);
 
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Serve frontend static files in development for testing
-if (process.env.NODE_ENV === "development" && process.env.SERVE_FRONTEND === "true") {
-    app.use(express.static(path.join(__dirname, "../university-past-questions-frontend/dist")));
-    
-    app.get("*", (req, res) => {
-        res.sendFile(path.resolve(__dirname, "../university-past-questions-frontend", "dist", "index.html"));
-    });
-}
 
 // ==================== API ROUTES ====================
 
@@ -293,7 +286,30 @@ app.use('/api/auth', authRoutes);
 app.use('/api/videos', videoRoutes);           
 app.use('/api/videos', pinnedVideoRoutes);    
 app.use('/api/past-questions', pastQuestionRoutes); 
-app.use('/api/courses', courseRoutes);        
+app.use('/api/courses', courseRoutes);         
+
+// Serve frontend static files in development for testing
+if (process.env.NODE_ENV === "development" && process.env.SERVE_FRONTEND === "true") {
+    app.use(express.static(path.join(__dirname, "../university-past-questions-frontend/dist")));
+    
+    // Only serve frontend for non-API routes
+    app.get("*", (req, res) => {
+        // Don't serve frontend for API routes
+        if (req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/uploads/')) {
+            return res.status(404).json({
+                success: false,
+                message: `Route ${req.originalUrl} not found`,
+                availableRoutes: [
+                    'GET /api/courses',
+                    'GET /api/past-questions',
+                    'GET /api/health',
+                    'GET /uploads/:filename'
+                ]
+            });
+        }
+        res.sendFile(path.resolve(__dirname, "../university-past-questions-frontend", "dist", "index.html"));
+    });
+}        
 
 // ==================== PRODUCTION FRONTEND SERVING ====================
 // Serve frontend static files in production

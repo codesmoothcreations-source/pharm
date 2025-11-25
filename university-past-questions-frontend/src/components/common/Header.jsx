@@ -99,7 +99,7 @@ const Header = () => {
               <FaSearch />
             </button> */}
 
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <div className={styles.userMenu}>
                 <button className={styles.userButton}>
                   <FaUser className="user-icon" />
@@ -110,11 +110,6 @@ const Header = () => {
                   {isAdmin && <Link to="/admin" className={styles.dropdownItem}>Admin Panel</Link>}
                   <button onClick={handleLogout} className={styles.dropdownItem}>Sign Out</button>
                 </div>
-              </div>
-            ) : (
-              <div className={styles.authButtons}>
-                <Link to="/login" className={`${styles.btn} ${styles.btnOutline}`}>Sign In</Link>
-                <Link to="/register" className={`${styles.btn} ${styles.btnPrimary}`}>Join Now</Link>
               </div>
             )}
 
@@ -151,7 +146,7 @@ const Header = () => {
                 Admin Panel
               </Link>
             )}
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <div className={styles.mobileAuth}>
                 <div className={styles.mobileUserInfo}>
                   <FaUser className={styles.mobileUserIcon} />
@@ -165,22 +160,11 @@ const Header = () => {
                   Sign Out
                 </button>
               </div>
-            ) : (
-              <div className={styles.mobileAuth}>
-                <Link to="/login" className={`${styles.btn} ${styles.btnOutline}`}>Sign In</Link>
-                <Link to="/register" className={`${styles.btn} ${styles.btnPrimary}`}>Join Now</Link>
-              </div>
             )}
           </nav>
         )}
 
-        {/* Mobile Authentication Section - Show when not authenticated */}
-        {isMenuOpen && !isAuthenticated && (
-          <div className={styles.mobileAuth}>
-            <Link to="/login" className={`${styles.btn} ${styles.btnOutline}`}>Sign In</Link>
-            <Link to="/register" className={`${styles.btn} ${styles.btnPrimary}`}>Join Now</Link>
-          </div>
-        )}
+
       </div>
     </header>
   )
